@@ -1,0 +1,94 @@
+[
+  {
+    "name": "create_payment",
+    "description": "Send a payment to a recipient by IBAN.",
+    "parameters": {
+      "type": "object",
+      "required": ["amount_value", "amount_currency", "recipient_iban", "recipient_name", "description"],
+      "properties": {
+        "amount_value": {"type": "string", "description": "e.g. '10.00'"},
+        "amount_currency": {"type": "string", "description": "e.g. 'EUR'"},
+        "recipient_iban": {"type": "string", "description": "IBAN"},
+        "recipient_name": {"type": "string", "description": "Name of recipient"},
+        "description": {"type": "string", "description": "Purpose of payment"}
+      }
+    }
+  },
+  {
+    "name": "request_money",
+    "description": "Send a payment request to another user.",
+    "parameters": {
+      "type": "object",
+      "required": ["amount_inquired", "counterparty_alias"],
+      "properties": {
+        "amount_inquired": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "string", "description": "e.g. '10.00'" },
+            "currency": { "type": "string", "description": "e.g. 'EUR'" }
+          }
+        },
+        "counterparty_alias": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "description": "Alias type EMAIL, PHONE_NUMBER or IBAN" },
+            "value": { "type": "string", "description": "Alias value, e.g. email or phone" },
+            "name": { "type": "string", "description": "Display name for the recipient" }
+          }
+        },
+        "description": {
+          "type": "string",
+          "description": "Description for the payment request"
+        }
+      }
+    }
+  },
+  {
+    "name": "get_customer_limits",
+    "description": "Retrieve account and card limits for the current user.",
+    "parameters": {"type": "object", "properties": {}}
+  },
+  {
+    "name": "get_subscription_contracts",
+    "description": "Fetch all subscription billing contracts for the authenticated user.",
+    "parameters": {"type": "object", "properties": {}}
+  },
+  {
+    "name": "list_user_invoices",
+    "description": "List all invoices associated with the current user.",
+    "parameters": {"type": "object", "properties": {}}
+  },
+  {
+    "name": "get_invoice_by_id",
+    "description": "Retrieve details of a specific invoice.",
+    "parameters": {
+      "type": "object",
+      "required": ["invoice_id"],
+      "properties": {
+        "invoice_id": {"type": "integer", "description": "Invoice ID"}
+      }
+    }
+  },
+  {
+    "name": "export_invoice_pdf",
+    "description": "Export PDF of a specific invoice by ID.",
+    "parameters": {
+      "type": "object",
+      "required": ["invoice_id"],
+      "properties": {
+        "invoice_id": {"type": "integer", "description": "Invoice ID"}
+      }
+    }
+  },
+  {
+    "name": "get_invoice_pdf_content",
+    "description": "Get the raw PDF content of an invoice.",
+    "parameters": {
+      "type": "object",
+      "required": ["invoice_id"],
+      "properties": {
+        "invoice_id": {"type": "integer", "description": "Invoice ID"}
+      }
+    }
+  }
+]
