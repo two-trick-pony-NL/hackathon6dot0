@@ -33,31 +33,31 @@ def for_frontend(prompt: str = Body(..., media_type="text/plain")):
     return_to_frontend =  {
         "finn_answer": response,
         "attachment": False,
-        #"attachment_url": "https://google.com",
-        "payment": {
-            "_id_": 12345678,
-            "_created": "2025-05-02",
-            "_amount": {
-            "_currency": "EUR",
-            "_value": "35.99"
-            },
-            "_description": "Dinner reimbursement",
-            "_counterparty_alias": {
-            "label_monetary_account": {
-                "_display_name": "L. Brunner",
-                "_avatar": {
-                "_image": [
-                    {
-                    "_attachment_public_uuid": "abc-123",
-                    "_height": 1024,
-                    "_width": 1024,
-                    "_content_type": "image/png"
-                    }
-                ]
-                }
-            }
-            }
-        }
+        "attachment_url": "https://google.com",
+        # "payment": {
+        #     "_id_": 12345678,
+        #     "_created": "2025-05-02",
+        #     "_amount": {
+        #     "_currency": "EUR",
+        #     "_value": "35.99"
+        #     },
+        #     "_description": "Dinner reimbursement",
+        #     "_counterparty_alias": {
+        #     "label_monetary_account": {
+        #         "_display_name": "L. Brunner",
+        #         "_avatar": {
+        #         "_image": [
+        #             {
+        #             "_attachment_public_uuid": "abc-123",
+        #             "_height": 1024,
+        #             "_width": 1024,
+        #             "_content_type": "image/png"
+        #             }
+        #         ]
+        #         }
+        #     }
+        #     }
+        # }
     }
     return return_to_frontend
 
