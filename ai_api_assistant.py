@@ -16,7 +16,9 @@ from bunq.sdk.model.generated.endpoint import (
     CardApiObject,
     RequestResponseApiObject,
     ScheduleInstanceApiObject,
-    ScheduleApiObject
+    ScheduleApiObject, 
+    BunqMeTabApiObject,
+    BunqMeTabEntryApiObject
 )
 from CONSTANTS import (
     OPENAI_API_KEY,
@@ -56,6 +58,8 @@ def execute_api_call(name, args=None):
             return BillingContractSubscriptionApiObject.list().value
         elif name == "list_user_invoices":
             return InvoiceByUserApiObject.list().value
+        elif name == "create_bunq_me_fundraiser_link":
+            return generate_bunq_me_link(args)
         else:
             return "Something went wrong"
     except KeyError as e:
@@ -164,3 +168,56 @@ def generate_pin_code_assignment():
     }
 
     return pin_code_assignment
+
+def generate_bunq_me_link(args):
+    try:
+        print("Starting generate_bunq_me_link function")
+        
+        # Create the amount object (Ensure it can accept these attributes in a constructor)
+        amount_inquired = AmountObject(value=str(args["amount"]["value"]), currency=args["amount"]["currency"])
+        
+        # Check if 'redirect_url' is provided
+        redirect_url = args.get("redirect_url", None)
+        
+        # Create BunqMeTab entry with the parameters passed directly
+        bunq_me_tab_entry = BunqMeTabEntryApiObject(
+            amount_inquired=amount_inquired,
+            description=args["description"],
+            redirect_url=redirect_url
+        )
+        
+        print("Created BunqMeTabEntry object")
+        
+        # Create the actual BunqMeTab
+        print("Calling BunqMeTabApiObject.create...")
+        bunq_me_tab = BunqMeTabApiObject.create(bunq_me_tab_entry)  # Pass the object as a whole
+        
+        bunq_me_tab_id = bunq_me_tab.value  # Assuming the returned object has a 'value' attribute
+        print(f"Created BunqMeTab with ID: {bunq_me_tab_id}")
+        
+        # Retrieve the created tab to get the share URL
+        bunq_me_tab = BunqMeTabApiObject.get(bunq_me_tab_id).value
+        
+
+        
+        # Try to access the share URL in different ways
+        share_url = getattr(bunq_me_tab, "bunqme_tab_share_url", None)
+        if share_url:
+            print(f"Found share URL: {share_url}")
+            return share_url
+        
+        # If the above fails, try to access it through the entry
+        if hasattr(bunq_me_tab, "bunqme_tab_entry"):
+            entry = bunq_me_tab.bunqme_tab_entry
+            print(f"BunqMeTabEntry attributes: {dir(entry)}")
+            share_url = getattr(entry, "share_url", None)
+            if share_url:
+                print(f"Found share URL in entry: {share_url}")
+                return share_url
+        
+        print("Could not find share URL in the response")
+        return "URL generation failed: Could not find share URL in the response"
+        
+    except Exception as e:
+        print(f"Error in generate_bunq_me_link: {e}")
+        return f"URL generation failed: {str(e)}"

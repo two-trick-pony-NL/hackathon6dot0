@@ -165,5 +165,24 @@
     "name": "get_subscription_contracts",
     "description": "Fetch all subscription billing contracts for the authenticated user.",
     "parameters": {"type": "object", "properties": {}}
+  },
+  {
+    "name": "create_bunq_me_fundraiser_link",
+    "description": "Creates a sharable URL for the user to collect payments from many users like fundraising.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "string", "description": "e.g. '10.00'" },
+            "currency": { "type": "string", "description": "e.g. 'EUR'" }
+          }
+        },
+        "description": { "type": "string", "description": "payment description for this fundraiser" },
+        "redirect_url": { "type": "string", "description": "url we will send the user to after payment" }
+      },
+      "required": ["amount", "description"]
+    }
   }
 ]
