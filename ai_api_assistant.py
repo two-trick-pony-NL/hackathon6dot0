@@ -154,7 +154,7 @@ def create_scheduled_payment(args):
 
 def create_card(args):
     return CardDebitApiObject.create(
-        second_line = " ",
+        second_line = args["second_line"],
         name_on_card = user_context.user_person.display_name,
         type_ = args["type"],
         product_type = args["product_type"],
@@ -163,6 +163,7 @@ def create_card(args):
 def create_monetary_account(args):
     monetary_account_id = MonetaryAccountBankApiObject.create(
         currency = args["currency"],
+        description = args["description"],
     ).value
 
     return monetary_account_id
