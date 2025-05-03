@@ -1,11 +1,8 @@
-# main.py
 from fastapi import FastAPI, Body
-from ai_api_assistant import call_ai_function
+from ai_api_assistant import execute_prompt
 from transformer import generate_text_answer
-from CONSTANTS import USER_ADDRESS_BOOK
 
 app = FastAPI()
-
 
 @app.get("/")
 def test():
@@ -15,7 +12,7 @@ def test():
 @app.post("/send_prompt")
 def send_prompt(prompt: str = Body(..., media_type="text/plain")):
     print(prompt)
-    result = call_ai_function(query=prompt)
+    result = execute_prompt(query=prompt)
     return result
 
 
@@ -24,7 +21,7 @@ def for_frontend(prompt: str = Body(..., media_type="text/plain")):
     print(prompt)
     ###
     # Do the Mashid magic
-    result = call_ai_function(query=prompt)
+    result = execute_prompt(query=prompt)
     #p#rint(result)
     response = generate_text_answer(prompt, result)
     
