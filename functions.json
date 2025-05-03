@@ -120,7 +120,7 @@
       "properties": {
         "second_line": {
           "type": "string",
-          "description": "Purpose of the card."
+          "description": "Purpose of the card. use an empty string if not available"
         },
         "name_on_card": {
           "type": "string",
