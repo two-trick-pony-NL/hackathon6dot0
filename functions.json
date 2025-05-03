@@ -9,11 +9,85 @@
         "amount_value": {"type": "string", "description": "e.g. '10.00'"},
         "amount_currency": {"type": "string", "description": "e.g. 'EUR'"},
         "recipient_iban": {"type": "string", "description": "IBAN"},
+        "recipient_email": {"type": "string", "description": "EMAIL"},
+        "recipient_phone": {"type": "string", "description": "PHONE"},
         "recipient_name": {"type": "string", "description": "Name of recipient"},
         "description": {"type": "string", "description": "Purpose of payment"}
       }
     }
   },
+  {
+    "name": "schedule_payment",
+    "description": "Schedule a recurring payment to a recipient with the necessary amount, recipient, description, and schedule details.",
+    "parameters": {
+      "type": "object",
+      "required": ["payment", "schedule", "amount_value"],
+      "properties": {
+        "payment": {
+          "type": "object",
+          "required": ["counterparty_alias", "description"],
+          "properties": {
+            "amount": {
+              "type": "object",
+              "required": ["value", "currency"],
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "description": "The amount to be transferred, e.g. '10.00'."
+                },
+                "currency": {
+                  "type": "string",
+                  "description": "Currency code, e.g. 'EUR'."
+                }
+              }
+            },
+            "counterparty_alias": {
+              "type": "object",
+              "required": ["type", "value", "name"],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "Alias type, e.g. 'EMAIL' or 'IBAN'."
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Alias value, like an IBAN or email."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Recipient display name."
+                }
+              }
+            },
+            "description": {
+              "type": "string",
+              "description": "Payment description (max 140 characters for external IBANs)."
+            }
+          }
+        },
+        "schedule": {
+          "type": "object",
+          "required": ["time_start", "recurrence_unit", "recurrence_size"],
+          "properties": {
+            "time_start": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Schedule start time in ISO 8601 format."
+            },
+            "recurrence_unit": {
+              "type": "string",
+              "enum": ["ONCE", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY"],
+              "description": "How often the payment should recur."
+            },
+            "recurrence_size": {
+              "type": "integer",
+              "description": "Number of recurrence units between payments."
+            }
+          }
+        }
+      }
+    }
+  }, 
   {
     "name": "request_money",
     "description": "Send a payment request to another user.",
@@ -90,5 +164,53 @@
         "invoice_id": {"type": "integer", "description": "Invoice ID"}
       }
     }
+  },
+  {
+    "name": "order_new_card",
+    "description": "Create a new debit card for the user.",
+    "parameters": {
+      "type": "object",
+      "required": ["name_on_card", "type", "product_type", "alias", "pin_code"],
+      "properties": {
+        "second_line": {
+          "type": "string",
+          "description": "Text on the second line of the card. Often used for labels like 'MY CARD'."
+        },
+        "name_on_card": {
+          "type": "string",
+          "description": "Name printed on the front of the card."
+        },
+        "type": {
+          "type": "string",
+          "description": "Card type. Use 'MASTERCARD'."
+        },
+        "product_type": {
+          "type": "string",
+          "description": "Card product. Use 'MASTERCARD_DEBIT' or similar."
+        },
+        "alias": {
+          "type": "object",
+          "description": "Alias object used for the card (e.g., IBAN or EMAIL).",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "Alias type: IBAN, EMAIL, or PHONE_NUMBER."
+            },
+            "value": {
+              "type": "string",
+              "description": "Alias value, such as an IBAN or email address."
+            }
+          }
+        },
+        "pin_code": {
+          "type": "string",
+          "description": "4-digit PIN code to assign to the card."
+        }
+      }
+    }
   }
+  
+  
+  
+
 ]
