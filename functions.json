@@ -113,15 +113,14 @@
     }
   }, 
   {
-    "name": "order_new_card",
+    "name": "create_card",
     "description": "Create a new debit card for the user.",
     "parameters": {
       "type": "object",
-      "required": ["name_on_card", "type", "product_type", "alias", "pin_code"],
       "properties": {
         "second_line": {
           "type": "string",
-          "description": "Text on the second line of the card. Often used for labels like 'MY CARD'."
+          "description": "Text on the second line of the card."
         },
         "name_on_card": {
           "type": "string",
@@ -148,10 +147,19 @@
               "description": "Alias value, such as an IBAN or email address."
             }
           }
-        },
-        "pin_code": {
+        }
+      }
+    }
+  },
+  {
+    "name": "create_monetary_account",
+    "description": "Create a new payment account for the user.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "currency": {
           "type": "string",
-          "description": "4-digit PIN code to assign to the card."
+          "description": "Currency of the payment account e.g. EUR "
         }
       }
     }

@@ -1,24 +1,19 @@
+from bunq.sdk.model.generated.object_ import AmountObject
 from openai import OpenAI
 from bunq.sdk.context.api_context import ApiContext
 from bunq.sdk.context.bunq_context import BunqContext
-from bunq.sdk.model.generated.object_ import AmountObject, PointerObject
 from bunq.sdk.model.generated.endpoint import (
     BillingContractSubscriptionApiObject,
     CustomerLimitApiObject,
     InvoiceByUserApiObject,
-    InvoiceExportPdfApiObject,
-    InvoiceExportPdfContentApiObject,
     PaymentApiObject,
     RequestInquiryApiObject,
     MonetaryAccountBankApiObject,
     CardDebitApiObject,
     SchedulePaymentApiObject,
-    CardApiObject,
-    RequestResponseApiObject,
-    ScheduleInstanceApiObject,
-    ScheduleApiObject, 
     BunqMeTabApiObject,
-    BunqMeTabEntryApiObject
+    BunqMeTabEntryApiObject,
+    ScheduleApiObject,
 )
 from CONSTANTS import (
     OPENAI_API_KEY,
@@ -29,7 +24,6 @@ from CONSTANTS import (
     MODEL_NAME,
 )
 from datetime import datetime
-import random
 import json
 
 client = OpenAI(api_key=OPENAI_API_KEY)
@@ -42,24 +36,32 @@ def execute_api_call(name, args=None):
     try:
         if name == "send_payment":
             payment_id = send_payment(args)
-            return PaymentApiObject.get(payment_id).value
+            response = PaymentApiObject.get(payment_id).value
+            return generate_response(response, "payment")
         elif name == "request_payment":
             request_id = request_payment(args)
-            return RequestInquiryApiObject.get(request_id).value
+            response = RequestInquiryApiObject.get(request_id).value
+            return generate_response(response, "request")
         elif name == "schedule_payment":
             scheduled_payment_id = create_scheduled_payment(args)
-            return ScheduleApiObject.get(scheduled_payment_id).value
-        elif name == "order_new_card":
-            card_id = order_card(args)
-            return CardApiObject.get(card_id).value
+            response = ScheduleApiObject.get(scheduled_payment_id).value
+            return generate_response(response, "schedule")
+        elif name == "create_card":
+            response = create_card(args)
+            return generate_response(response, "card")
+        elif name == "create_monetary_account":
+            monetary_account_id = create_monetary_account(args)
+            response = MonetaryAccountBankApiObject.get(monetary_account_id).value
+            return generate_response(response, "monetary_account")
+        elif name == "create_bunq_me_fundraiser_link":
+            response = generate_bunq_me_link(args)
+            return generate_response(response, "attachment_url")
         elif name == "get_customer_limits":
             return CustomerLimitApiObject.list().value
         elif name == "get_subscription_contracts":
             return BillingContractSubscriptionApiObject.list().value
         elif name == "list_user_invoices":
             return InvoiceByUserApiObject.list().value
-        elif name == "create_bunq_me_fundraiser_link":
-            return generate_bunq_me_link(args)
         else:
             return "Something went wrong"
     except KeyError as e:
@@ -149,63 +151,56 @@ def create_scheduled_payment(args):
 
     return scheduled_payment_id
 
-def order_card(args):
-    card_id = CardDebitApiObject.create(
+def create_card(args):
+    return CardDebitApiObject.create(
         second_line = " ",
-        name_on_card = " ",
+        name_on_card = user_context.user_person.display_name,
         type_ = args["type"],
-        product_type = "MASTERCARD",
-        pin_code_assignment = [generate_pin_code_assignment()]
+        product_type = args["product_type"],
     ).value
 
-    return card_id
+def create_monetary_account(args):
+    monetary_account_id = MonetaryAccountBankApiObject.create(
+        currency = args["currency"],
+    ).value
 
-def generate_pin_code_assignment():
-    pincode = [f"{random.randint(0, 9999):04d}" for _ in range(4)]
-    pin_code_assignment = {
-        "type": "PRIMARY",
-        "pin_code": pincode
-    }
-
-    return pin_code_assignment
+    return monetary_account_id
 
 def generate_bunq_me_link(args):
     try:
         print("Starting generate_bunq_me_link function")
-        
+
         # Create the amount object (Ensure it can accept these attributes in a constructor)
         amount_inquired = AmountObject(value=str(args["amount"]["value"]), currency=args["amount"]["currency"])
-        
+
         # Check if 'redirect_url' is provided
         redirect_url = args.get("redirect_url", None)
-        
+
         # Create BunqMeTab entry with the parameters passed directly
         bunq_me_tab_entry = BunqMeTabEntryApiObject(
             amount_inquired=amount_inquired,
             description=args["description"],
             redirect_url=redirect_url
         )
-        
+
         print("Created BunqMeTabEntry object")
-        
+
         # Create the actual BunqMeTab
         print("Calling BunqMeTabApiObject.create...")
         bunq_me_tab = BunqMeTabApiObject.create(bunq_me_tab_entry)  # Pass the object as a whole
-        
+
         bunq_me_tab_id = bunq_me_tab.value  # Assuming the returned object has a 'value' attribute
         print(f"Created BunqMeTab with ID: {bunq_me_tab_id}")
-        
+
         # Retrieve the created tab to get the share URL
         bunq_me_tab = BunqMeTabApiObject.get(bunq_me_tab_id).value
-        
 
-        
         # Try to access the share URL in different ways
         share_url = getattr(bunq_me_tab, "bunqme_tab_share_url", None)
         if share_url:
             print(f"Found share URL: {share_url}")
             return share_url
-        
+
         # If the above fails, try to access it through the entry
         if hasattr(bunq_me_tab, "bunqme_tab_entry"):
             entry = bunq_me_tab.bunqme_tab_entry
@@ -214,10 +209,13 @@ def generate_bunq_me_link(args):
             if share_url:
                 print(f"Found share URL in entry: {share_url}")
                 return share_url
-        
+
         print("Could not find share URL in the response")
         return "URL generation failed: Could not find share URL in the response"
-        
+
     except Exception as e:
         print(f"Error in generate_bunq_me_link: {e}")
         return f"URL generation failed: {str(e)}"
+
+def generate_response(response, response_type):
+    return {response_type: response}

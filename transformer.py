@@ -6,14 +6,14 @@ from CONSTANTS import (
 )
 client = OpenAI(api_key=OPENAI_API_KEY)
 
-def generate_text_answer(query, api_call_result):
+def generate_text_answer(prompt, api_call_result):
     try:
         messages = [
             {
                 "role": "system",
                 "content": TEXT_ASSISTANT_PROMPT.format(api_response=api_call_result)
             },
-            {"role": "user", "content": query}
+            {"role": "user", "content": prompt}
         ]
 
         response = client.chat.completions.create(
