@@ -18,8 +18,5 @@ def send_prompt(prompt: str = Body(..., media_type="text/plain")):
 
 @app.post("/for_frontend")
 def for_frontend(prompt: str = Body(..., media_type="text/plain")):
-    response = execute_prompt(prompt)
-    response["finn_answer"] = generate_text_answer(prompt, response)
-
-    return response
+    return execute_prompt(prompt)
 

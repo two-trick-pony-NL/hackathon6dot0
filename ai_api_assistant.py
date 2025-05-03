@@ -1,7 +1,7 @@
 from bunq.sdk.model.generated.object_ import AmountObject
-from openai import OpenAI
 from bunq.sdk.context.api_context import ApiContext
 from bunq.sdk.context.bunq_context import BunqContext
+from transformer import generate_text_answer
 from bunq.sdk.model.generated.endpoint import (
     BillingContractSubscriptionApiObject,
     CustomerLimitApiObject,
@@ -23,6 +23,7 @@ from CONSTANTS import (
     USER_ADDRESS_BOOK,
     MODEL_NAME,
 )
+from openai import OpenAI
 from datetime import datetime
 import json
 
@@ -32,30 +33,30 @@ BunqContext.load_api_context(api_context)
 user_context = BunqContext.user_context()
 
 
-def execute_api_call(name, args=None):
+def execute_api_call(prompt, name, args=None):
     try:
         if name == "send_payment":
             payment_id = send_payment(args)
             response = PaymentApiObject.get(payment_id).value
-            return generate_response(response, "payment")
+            return generate_response(prompt, response, "payment")
         elif name == "request_payment":
             request_id = request_payment(args)
             response = RequestInquiryApiObject.get(request_id).value
-            return generate_response(response, "request")
+            return generate_response(prompt, response, "request")
         elif name == "schedule_payment":
             scheduled_payment_id = create_scheduled_payment(args)
             response = ScheduleApiObject.get(scheduled_payment_id).value
-            return generate_response(response, "schedule")
+            return generate_response(prompt, response, "schedule")
         elif name == "create_card":
             response = create_card(args)
-            return generate_response(response, "card")
+            return generate_response(prompt, response, "card")
         elif name == "create_monetary_account":
             monetary_account_id = create_monetary_account(args)
             response = MonetaryAccountBankApiObject.get(monetary_account_id).value
-            return generate_response(response, "monetary_account")
+            return generate_response(prompt, response, "monetary_account")
         elif name == "create_bunq_me_fundraiser_link":
             response = generate_bunq_me_link(args)
-            return generate_response(response, "attachment_url")
+            return generate_response(prompt, response, "attachment_url")
         elif name == "get_customer_limits":
             return CustomerLimitApiObject.list().value
         elif name == "get_subscription_contracts":
@@ -70,7 +71,7 @@ def execute_api_call(name, args=None):
         return [f"❌ Error occurred: {str(e)}"]
 
 
-def execute_prompt(query):
+def execute_prompt(prompt):
     try:
         all_function = load_all_function()
 
@@ -85,7 +86,7 @@ def execute_prompt(query):
             },
             {
                 "role": "user",
-                "content": query
+                "content": prompt
             }
         ]
 
@@ -104,7 +105,7 @@ def execute_prompt(query):
 
         print(f"\n→ Running {fn_name} with args {fn_args}\n")
 
-        return execute_api_call(fn_name, fn_args)
+        return execute_api_call(prompt, fn_name, fn_args)
 
     except Exception as e:
         print(f"❌ Error: {e}")
@@ -217,5 +218,8 @@ def generate_bunq_me_link(args):
         print(f"Error in generate_bunq_me_link: {e}")
         return f"URL generation failed: {str(e)}"
 
-def generate_response(response, response_type):
-    return {response_type: response}
+def generate_response(prompt, response, response_type):
+    return {
+        response_type: response,
+        "finn_answer": generate_text_answer(prompt, response)
+    }
