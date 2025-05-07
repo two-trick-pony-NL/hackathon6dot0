@@ -62,9 +62,10 @@ Prompt API
   'http://localhost:8000/for_frontend' \
   -H 'accept: application/json' \
   -H 'Content-Type: text/plain' \
-  -d 'Send a request for 100 euro to sugardaddy@bunq.com'```
-Returns:
+  -d 'Send a request for 100 euro to sugardaddy@bunq.com'
+```
 
+Returns as response:
 
 ```{
   "request": {
@@ -178,20 +179,19 @@ Returns:
 }
 
 # 📂 Project Structure
-bash
-Copy
-Edit
+
+```
 .
 ├── main.py                    # FastAPI server
 ├── ai_api_assistant.py        # Handles OpenAI chat + tool calls
 ├── transformer.py             # Converts data responses into text answers
 ├── functions.json             # Declares tool/function definitions for OpenAI
-├── .env
+├── .env                       # Add your bunq sandbox API key and OpenAI keys here
 ├── requirements.txt
 └── README.md
+```
 
 📌 Notes
-This app is sandbox-only. Do not use it with production bunq keys unless you know what you're doing. We provide this code as is without accepting any liability for you losing funds. 
+This app is intended for sandbox use only. Do not use it with production bunq API keys unless you fully understand the risks. The code is provided “as is” without any warranties or guarantees. We accept no liability for any loss of funds or damages resulting from its use. Use at your own risk.
 
-It assumes all OpenAI tools are pre-defined in functions.json.
 
