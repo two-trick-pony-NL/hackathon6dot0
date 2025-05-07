@@ -192,7 +192,7 @@ Returns as response:
 └── README.md
 ```
 
-📌 Notes
+# 📌 Notes
 This app is intended for sandbox use only. Do not use it with production bunq API keys unless you fully understand the risks. The code is provided “as is” without any warranties or guarantees. We accept no liability for any loss of funds or damages resulting from its use. Use at your own risk.
 
 
