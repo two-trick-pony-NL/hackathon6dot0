@@ -3,7 +3,11 @@
 
 # 🧠 bunq MCP (Model Context Protocol)
 
-This project is an OpenAI-powered assistant that integrates with the **bunq API**, allowing users to send natural language prompts that are translated into actionable banking operations. This app is able to send payments and requests, schedule payments, create cards, and open bank accounts through bunq’s API.
+This project is an OpenAI-powered assistant that integrates with the **bunq API**, you can send REST API calls to the server which will then interact over the MCP protocol. 
+
+It allows users to send natural language prompts that are translated into actionable banking operations. This app is able to send payments and requests, schedule payments, create cards, and open bank accounts through bunq’s API.
+
+if you're looking for a pure MCP implementation of the same project check out: https://github.com/two-trick-pony-NL/bunq-model-context-protocol-server 
 
 ---
 
