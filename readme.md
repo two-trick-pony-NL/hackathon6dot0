@@ -177,6 +177,7 @@ Returns as response:
   },
   "finn_answer": "You've got it! Sending a request for 100 euro to sugardaddy@bunq.com. The sugar is in the email! You might want to check your inbox for confirmation or a sweet reply. 🍬 💸"
 }
+```
 
 # 📂 Project Structure
 
