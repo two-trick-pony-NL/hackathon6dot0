@@ -28,6 +28,7 @@ View full demo here: https://studio.youtube.com/video/wDTXks1sZmM/edit
 ## 🚀 Getting Started
 
 ### 1. Clone this repo
+And add a `.env` file with the following content: 
 
 ```.env
 OPENAI_API_KEY=sk-...
