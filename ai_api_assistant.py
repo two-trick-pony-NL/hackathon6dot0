@@ -1,5 +1,7 @@
+from dotenv import load_dotenv
+import os
 from bunq.sdk.model.generated.object_ import AmountObject
-from bunq.sdk.context.api_context import ApiContext
+from bunq.sdk.context.api_context import ApiContext, ApiEnvironmentType
 from bunq.sdk.context.bunq_context import BunqContext
 from transformer import generate_text_answer
 from bunq.sdk.model.generated.endpoint import (
@@ -16,8 +18,6 @@ from bunq.sdk.model.generated.endpoint import (
     ScheduleApiObject,
 )
 from CONSTANTS import (
-    OPENAI_API_KEY,
-    BUNQ_USER_API_KEY,
     GENERAL_ASSISTANT_PROMPT,
     SYSTEM_ADDRESS_BOOK_PROMPT,
     USER_ADDRESS_BOOK,
@@ -27,10 +27,20 @@ from openai import OpenAI
 from datetime import datetime
 import json
 
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+BUNQ_USER_API_KEY = os.getenv("BUNQ_USER_API_KEY")
+
+api_context = ApiContext.create(
+    ApiEnvironmentType.SANDBOX,
+    BUNQ_USER_API_KEY,
+    "bunq MCP Server"
+)
+
 client = OpenAI(api_key=OPENAI_API_KEY)
-api_context = ApiContext.restore("bunq_api_context.conf")
 BunqContext.load_api_context(api_context)
 user_context = BunqContext.user_context()
+
+
 
 
 def execute_api_call(prompt, name, args=None):

@@ -1,0 +1,5 @@
+bunq_sdk
+openai
+dotenv
+fastapi
+uvicorn

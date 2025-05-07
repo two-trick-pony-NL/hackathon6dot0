@@ -1,10 +1,17 @@
 from openai import OpenAI
 from CONSTANTS import (
-    OPENAI_API_KEY,
     TEXT_MODEL_NAME,
     TEXT_ASSISTANT_PROMPT,
 )
-client = OpenAI(api_key=OPENAI_API_KEY)
+
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # <-- This is required to load the .env file
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=OPENAI_API_KEY)  # <-- also make sure to pass the API key
 
 def generate_text_answer(prompt, api_call_result):
     try:

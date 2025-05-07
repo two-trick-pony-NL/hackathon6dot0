@@ -192,7 +192,7 @@
           }
         },
         "description": { "type": "string", "description": "payment description for this fundraiser" },
-        "redirect_url": { "type": "string", "description": "url we will send the user to after payment" }
+        "redirect_url": { "type": "string", "description": "url we will send the user to after payment if there is no url send users to https://bunq.com" }
       },
       "required": ["amount", "description"]
     }
