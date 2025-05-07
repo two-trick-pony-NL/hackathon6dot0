@@ -39,8 +39,6 @@ BUNQ_USER_API_KEY=your-sandbox-api-key
 You can request a sandbox user and API key with this call:
 
 ```bash
-Copy
-Edit```
 curl --location --request POST 'https://public-api.sandbox.bunq.com/v1/sandbox-user-person' \
 --header 'Content-Type: application/json' \
 --header 'User-Agent: postman' \
